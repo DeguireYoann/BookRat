@@ -33,13 +33,11 @@ Ce projet a été réalisé dans le cadre du cours "Programmation serveur Web av
 
 1. **Installer le SDK .NET Core**: Téléchargez et installez le SDK .NET Core à partir du site officiel de .NET : [dotnet.microsoft.com](https://dotnet.microsoft.com/download).
 
-2. **Installer Visual Studio Code (optionnel)**: Vous pouvez utiliser n'importe quel éditeur de code, mais Visual Studio Code est recommandé. Téléchargez et installez-le à partir de [code.visualstudio.com](https://code.visualstudio.com/).
+2. **Cloner le projet**: Utilisez la commande `git clone` pour cloner le projet depuis GitHub vers votre machine locale.
 
-3. **Cloner le projet**: Utilisez la commande `git clone` pour cloner le projet depuis GitHub vers votre machine locale.
+3. **Configurer la base de données**: Assurez-vous d'avoir une instance SQL Server disponible. Mettez à jour la chaîne de connexion dans le fichier `appsettings.json` pour refléter les paramètres de votre base de données.
 
-4. **Configurer la base de données**: Assurez-vous d'avoir une instance SQL Server disponible. Mettez à jour la chaîne de connexion dans le fichier `appsettings.json` pour refléter les paramètres de votre base de données.
-
-5. **Exécuter l'application**: Utilisez la commande `dotnet run` dans le répertoire racine de l'application pour lancer le serveur. Accédez à l'URL spécifiée dans votre navigateur Web pour accéder à l'application.
+4. **Exécuter l'application**: Utilisez la commande `dotnet run` dans le répertoire racine de l'application pour lancer le serveur. Accédez à l'URL spécifiée dans votre navigateur Web pour accéder à l'application.
 
 ## Remarques supplémentaires
 
