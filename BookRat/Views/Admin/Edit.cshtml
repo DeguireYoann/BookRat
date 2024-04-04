@@ -1,0 +1,76 @@
+﻿@model BookRat.Models.Livre
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Modifier Livre";
+    List<Categorie> categories = ViewBag.Categories;
+}
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-action="Index">Accueil</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+</div>
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="card" style="width: 50rem;">
+            <div class="alert alert-warning my-3" role="alert">
+                Êtes-vous sûr de vouloir modifier ce livre ?
+            </div>
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label asp-for="Titre" class="control-label"></label>
+                    <input asp-for="Titre" class="form-control" />
+                    <span asp-validation-for="Titre" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Categorie" class="control-label"></label>
+                    <select asp-for="Categorie" class="form-control" id="categorieDropdown" name="categorie">
+                        @foreach (var category in categories)
+                        {
+                            if (category.Titre == Model.Categorie)
+                            {
+                                <option value="@category.Id" selected>@category.Titre</option>
+                            }
+                            else
+                            {
+                                <option value="@category.Id">@category.Titre</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="Categorie" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Auteur" class="control-label"></label>
+                    <input asp-for="Auteur" class="form-control" />
+                    <span asp-validation-for="Auteur" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NbPages" class="control-label"></label>
+                    <input asp-for="NbPages" class="form-control" />
+                    <span asp-validation-for="NbPages" class="text-danger"></span>
+                </div>
+                <div class="form-group py-3">
+                    <input type="submit" value="Enregistrer" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

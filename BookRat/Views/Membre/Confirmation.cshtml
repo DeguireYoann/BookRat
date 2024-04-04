@@ -1,0 +1,27 @@
+﻿@model BookRat.Models.Livre
+@using Microsoft.AspNetCore.Http
+
+@{
+    Layout = "~/Views/Shared/_LayoutMembre.cshtml";
+    ViewData["Title"] = "Confirmation de la création de compte";
+}
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-action="Index">Accueil</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+</div>
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+</div>
+<div class="container">
+    <div class="alert alert-success" role="alert">
+        Votre compte a été créé avec succes.
+    </div>
+</div>
+

@@ -1,0 +1,56 @@
+﻿@model IEnumerable<BookRat.Models.Livre>
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Liste des Livres";
+}
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+</div>
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+    <p>
+        <a href="@Url.Action("Create")" class="btn btn-success"><i class="bi bi-plus-circle"></i> Ajouter un nouveau livre</a>
+    </p>
+</div>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Titre</th>
+                <th scope="col">Catégorie</th>
+                <th scope="col">Auteur</th>
+                <th scope="col" colspan="2">Nombre de pages</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var livre in Model)
+            {
+                <tr>
+                    <th scope="row">@livre.Id</th>
+                    <td>@livre.Titre</td>
+                    <td>@livre.Categorie</td>
+                    <td>@livre.Auteur</td>
+                    <td>@livre.NbPages</td>
+                    <td>
+                        <a href="@Url.Action("Details", new { id = livre.Id })" class="btn btn-primary btn-sm">
+                            <img src="~/images/loupe.png" alt="Voir plus" class="ml-2" style="width: 20px; height: 20px;">
+                        </a>
+                        <a href="@Url.Action("Edit", new { id = livre.Id })" class="btn btn-warning btn-sm">
+                            <img src="~/images/crayon.png" alt="Voir plus" class="ml-2" style="width: 20px; height: 20px;">
+                        </a>
+                        <a href="@Url.Action("Delete", new { id = livre.Id })" class="btn btn-danger btn-sm">
+                            <img src="~/images/trash.png" alt="Voir plus" class="ml-2" style="width: 20px; height: 20px;">
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

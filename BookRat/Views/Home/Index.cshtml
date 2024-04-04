@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Accueil";
+}
+
+<div class="text-center container">
+    <div class="p-5 text-center bg-image shadow rounded" style="
+            background-image: url('/images/bibliotheque.jpg');
+            background-position: center;
+            background-size: cover;
+            height: 600px;
+        ">
+        <div class="p-3 h-100" style="background-color: rgba(255, 255, 255, 0.5);">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div>
+                    <h2 class="mb-3">Nouveau à la bibliothèque</h2>
+                    <a class="btn btn-outline-dark btn-lg" asp-area="" asp-controller="Membre" asp-action="AjouterMembre">Enregistrez-vous</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="p-5 text-center bg-image shadow rounded" style="
+            background-image: url('/images/livres.jpg');
+            background-position: center;
+            background-size: cover;
+            height: 600px;
+        ">
+        <div class="p-3 h-100" style="background-color: rgba(255, 255, 255, 0.5);">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div>
+                    <h2 class="mb-3">Retourner ou emprunter des livres</h2>
+                    <a class="btn btn-outline-dark btn-lg" asp-area="" asp-controller="Connexion" asp-action="Connexion">Connectez-vous</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

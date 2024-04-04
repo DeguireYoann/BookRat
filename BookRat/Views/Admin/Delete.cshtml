@@ -1,0 +1,48 @@
+﻿@model BookRat.Models.Livre
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Supprimer un livre";
+}
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-action="Index">Accueil</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+</div>
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+</div>
+<div class="container">
+
+    <div class="row">
+        <div class="card" style="width: 50rem;">
+            <div class="card-body">
+                <div class="alert alert-danger" role="alert">
+                    Êtes-vous sûr de vouloir supprimer ce livre ?
+                </div>
+                <h5 class="card-title">Livre à supprimer : @Html.DisplayFor(model => model.Titre)</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>@Html.DisplayNameFor(model => model.Id) : </strong>@Html.DisplayFor(model => model.Id)</li>
+                <li class="list-group-item"><strong>@Html.DisplayNameFor(model => model.Categorie) : </strong>@Html.DisplayFor(model => model.Categorie)</li>
+                <li class="list-group-item"><strong>@Html.DisplayNameFor(model => model.Auteur) : </strong>@Html.DisplayFor(model => model.Auteur)</li>
+                <li class="list-group-item"><strong>@Html.DisplayNameFor(model => model.NbPages) : </strong>@Html.DisplayFor(model => model.NbPages)</li>
+            </ul>
+            <div class="card-body py-3">
+                @using (Html.BeginForm())
+                {
+                    <div class="form-actions no-color">
+                        <input type="submit" value="Supprimer" class="btn btn-danger" /> |
+                        @Html.ActionLink("Annuler", "Index")
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

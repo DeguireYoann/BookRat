@@ -1,0 +1,25 @@
+﻿@model BookRat.Models.Livre
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Accès refusé";
+}
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-action="Index" asp-controller="Home">Accueil</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+</div>
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+</div>
+<div class="container">
+    <div class="alert alert-danger" role="alert">
+        Vous ne possédez pas les droits pour accéder à cette page.
+    </div>
+</div>

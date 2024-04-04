@@ -1,0 +1,47 @@
+﻿@model IEnumerable<BookRat.Models.Pret>
+
+@{
+    Layout = "~/Views/Shared/_LayoutMembre.cshtml";
+    ViewData["Title"] = "Liste des prêts";
+}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-action="Index">Accueil</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+</div>
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+</div>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Titre</th>
+                <th scope="col">Date de Location</th>
+                <th scope="col">Date de retour</th>
+                <th scope="col" colspan="2">Retourner</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pret in Model)
+            {
+                <tr class="@(pret.Retourner ? "table-success" : DateTime.Now > pret.DateRetour && !pret.Retourner ? "table-danger" : "")">
+                    <th scope="row">@pret.TitreLivre</th>
+                    <td>@pret.DateLocation.ToString("yyyy/MM/dd")</td>
+                    <td>@pret.DateRetour.ToString("yyyy/MM/dd")</td>
+                    <td>@(pret.Retourner ? "Oui" : "Non")</td>
+                    <td>
+                        <a href="@Url.Action("Details", new { id = pret.LivreId })" class="btn btn-primary btn-sm">
+                            <img src="~/images/loupe.png" alt="Voir plus" class="ml-2" style="width: 20px; height: 20px;">
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

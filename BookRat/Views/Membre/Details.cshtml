@@ -1,0 +1,53 @@
+﻿@model BookRat.Models.Livre
+@using Microsoft.AspNetCore.Http
+
+@{
+    Layout = "~/Views/Shared/_LayoutMembre.cshtml";
+    ViewData["Title"] = "Détails du Livre";
+}
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-action="Index">Accueil</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+</div>
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="card" style="width: 50rem;">
+            <div class="card-body">
+                <div class="@( ViewBag.NbPrets < 3 ? "alert alert-success" : "alert alert-danger")" role="alert">
+                    Vous avez @ViewBag.NbPrets emprunts à votre actif
+                </div>
+                <h5 class="card-title">@Html.DisplayFor(model => model.Titre)</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>@Html.DisplayNameFor(model => model.Categorie) : </strong>@Html.DisplayFor(model => model.Categorie)</li>
+                <li class="list-group-item"><strong>@Html.DisplayNameFor(model => model.Auteur) : </strong>@Html.DisplayFor(model => model.Auteur)</li>
+                <li class="list-group-item"><strong>@Html.DisplayNameFor(model => model.NbPages) : </strong>@Html.DisplayFor(model => model.NbPages)</li>
+            </ul>
+            <div class="card-body py-3">
+                <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
+                <form asp-action="Pret" class="d-inline-block">
+                    <input type="hidden" name="id" value="@Html.DisplayFor(model => model.Id)" />
+                    <input type="submit" value="Emprunter" class="btn btn-primary" @(ViewBag.NbPrets >= 3 || ViewBag.Emprunter ? "disabled" : "") />
+                </form>
+                @if (ViewBag.Emprunter)
+                {
+                    <form asp-action="Retourner" asp-route-id="@ViewBag.PretId" method="post" class="d-inline-block">
+                        <button type="submit" class="btn btn-danger">Retourner</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
