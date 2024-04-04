@@ -5,6 +5,8 @@ using BookRat.Helpers;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using System.Data;
+using BookRat.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookRat.Controllers
 {
@@ -19,6 +21,7 @@ namespace BookRat.Controllers
         }
 
         // Méthode pour afficher la liste des livres disponibles
+        [ServiceFilter(typeof(MemberAuthorizationFilter))]
         public IActionResult Index()
         {
             List<Livre> listeLivre = new List<Livre>();
@@ -49,6 +52,7 @@ namespace BookRat.Controllers
         }
 
         // Méthode pour afficher la page de confirmation
+        [ServiceFilter(typeof(MemberAuthorizationFilter))]
         public ActionResult<string> Confirmation()
         {
             return View();
@@ -114,6 +118,7 @@ namespace BookRat.Controllers
         }
 
         // Méthode pour mettre à jour les données de session relatives aux prêts en cours
+        [ServiceFilter(typeof(MemberAuthorizationFilter))]
         private void SetSessionNbPret(SqlConnection connexion)
         {
             int prets = 0;
@@ -155,6 +160,7 @@ namespace BookRat.Controllers
         }
 
         // Méthode pour afficher la liste des prêts de l'utilisateur connecté
+        [ServiceFilter(typeof(MemberAuthorizationFilter))]
         public IActionResult ListePret()
         {
             List<Pret> listePrets = new List<Pret>();
@@ -183,6 +189,7 @@ namespace BookRat.Controllers
         }
 
         // Méthode pour afficher les détails d'un livre et vérifier s'il est déjà emprunté par l'utilisateur
+        [ServiceFilter(typeof(MemberAuthorizationFilter))]
         public IActionResult Details(int id)
         {
             Livre? livre = LivreHelper.GetLivreById(_chaineConnexion ?? "", id);
@@ -224,6 +231,7 @@ namespace BookRat.Controllers
 
         // Méthode pour traiter la demande de prêt d'un livre par l'utilisateur connecté
         [HttpPost]
+        [ServiceFilter(typeof(MemberAuthorizationFilter))]
         public IActionResult Pret(int id)
         {
             if (HttpContext.Session.GetInt32("Prets") >= 3)
@@ -265,6 +273,7 @@ namespace BookRat.Controllers
         // Méthode pour traiter le retour d'un livre par l'utilisateur connecté
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ServiceFilter(typeof(MemberAuthorizationFilter))]
         public IActionResult Retourner(int id)
         {
             try

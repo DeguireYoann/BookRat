@@ -14,7 +14,8 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddScoped<RoleAuthorizationFilter>();
+builder.Services.AddScoped<AdminAuthorizationFilter>();
+builder.Services.AddScoped<MemberAuthorizationFilter>();
 
 var app = builder.Build();
 

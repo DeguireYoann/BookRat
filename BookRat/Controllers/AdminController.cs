@@ -7,6 +7,7 @@ using BookRat.Filters;
 
 namespace BookRat.Controllers
 {
+    [ServiceFilter(typeof(AdminAuthorizationFilter))] // Appliquer le filtre à toutes les actions du contrôleur
     public class AdminController : Controller
     {
         private readonly string? _chaineConnexion;
@@ -17,8 +18,7 @@ namespace BookRat.Controllers
             _chaineConnexion = configuration.GetConnectionString("BdGplccConnectionString");
         }
 
-        // Méthode pour afficher la liste des livres (requiert une autorisation de rôle)
-        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        // Méthode pour afficher la liste des livres
         public IActionResult Index()
         {
             List<Livre> listeLivre = new List<Livre>();
@@ -45,8 +45,7 @@ namespace BookRat.Controllers
             return View(listeLivre);
         }
 
-        // Méthode pour afficher les détails d'un livre (requiert une autorisation de rôle)
-        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        // Méthode pour afficher les détails d'un livre
         public IActionResult Details(int id)
         {
             Livre? livre = LivreHelper.GetLivreById(_chaineConnexion ?? "", id);
@@ -58,8 +57,7 @@ namespace BookRat.Controllers
             return View(livre);
         }
 
-        // Méthode pour afficher le formulaire de création d'un livre (requiert une autorisation de rôle)
-        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        // Méthode pour afficher le formulaire de création d'un livre
         public IActionResult Create()
         {
             List<Categorie> categories = LivreHelper.GetAllCategories(_chaineConnexion ?? "");
@@ -68,9 +66,8 @@ namespace BookRat.Controllers
             return View();
         }
 
-        // Méthode pour créer un livre (requiert une autorisation de rôle)
+        // Méthode pour créer un livre
         [HttpPost]
-        [ServiceFilter(typeof(RoleAuthorizationFilter))]
         public IActionResult Create(Livre livre)
         {
             try
@@ -95,8 +92,7 @@ namespace BookRat.Controllers
             }
         }
 
-        // Méthode pour afficher le formulaire de modification d'un livre (requiert une autorisation de rôle)
-        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        // Méthode pour afficher le formulaire de modification d'un livre
         public IActionResult Edit(int id)
         {
             List<Categorie> categories = LivreHelper.GetAllCategories(_chaineConnexion ?? "");
@@ -109,9 +105,8 @@ namespace BookRat.Controllers
             return View(livre); ;
         }
 
-        // Méthode pour modifier un livre (requiert une autorisation de rôle)
+        // Méthode pour modifier un livre
         [HttpPost]
-        [ServiceFilter(typeof(RoleAuthorizationFilter))]
         public IActionResult Edit(int id, Livre livre)
         {
             try
@@ -137,8 +132,7 @@ namespace BookRat.Controllers
             }
         }
 
-        // Méthode pour afficher le formulaire de suppression d'un livre (requiert une autorisation de rôle)
-        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        // Méthode pour afficher le formulaire de suppression d'un livre
         public IActionResult Delete(int id)
         {
             Livre? livre = LivreHelper.GetLivreById(_chaineConnexion ?? "", id);
@@ -146,10 +140,9 @@ namespace BookRat.Controllers
             return View(livre);
         }
 
-        // Méthode pour gérer la suppression d'un livre (requiert une autorisation de rôle)
+        // Méthode pour gérer la suppression d'un livre
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [ServiceFilter(typeof(RoleAuthorizationFilter))]
         public IActionResult DeleteConfirmed(int id)
         {
             try

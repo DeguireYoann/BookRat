@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookRat.Filters
 {
-    public class RoleAuthorizationFilter : IActionFilter
+    public class MemberAuthorizationFilter : IActionFilter
     {
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var role = context.HttpContext.Session.GetString("Role");
+            int? membreId = context.HttpContext.Session.GetInt32("MembreId");
 
-            if (role != "A")
+            if (membreId == null)
             {
                 context.Result = new RedirectToActionResult("AccessDenied", "Error", null);
             }
