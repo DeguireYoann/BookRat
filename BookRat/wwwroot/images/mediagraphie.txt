@@ -7,4 +7,4 @@ icons
 <a href="https://www.flaticon.com/free-icons/art-and-design" title="art and design icons">Art and design icons created by Arkinasi - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/search" title="search icons">Search icons created by Pixel perfect - Flaticon</a>
   
-  
+Utilisation du template avec images designer par: <a href="https://www.styleshout.com/">StyleShout</a> Distribution By <a href="https://themewagon.com">ThemeWagon</a></span>

@@ -31,7 +31,7 @@
             @foreach (var pret in Model)
             {
                 <tr class="@(pret.Retourner ? "table-success" : DateTime.Now > pret.DateRetour && !pret.Retourner ? "table-danger" : "")">
-                    <th scope="row">@pret.TitreLivre</th>
+                    <th scope="row">@pret.Livre.Titre</th>
                     <td>@pret.DateLocation.ToString("yyyy/MM/dd")</td>
                     <td>@pret.DateRetour.ToString("yyyy/MM/dd")</td>
                     <td>@(pret.Retourner ? "Oui" : "Non")</td>

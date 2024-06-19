@@ -1,44 +1,65 @@
-﻿@model BookRat.Models.MembreViewModel
+﻿@model BookRat.Models.ConnexionViewModel
 
 @{
     ViewData["Title"] = "Connexion";
 }
-<div class="container-fluid">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a asp-action="Index" asp-controller="Home">Accueil</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
-        </ol>
-    </nav>
-</div>
-<div class="container">
-    <h1>@ViewData["Title"]</h1>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="card" style="width: 50rem;">
-            <form asp-action="Connexion" class="py-3">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Courriel" class="control-label"></label>
-                    <input asp-for="Courriel" class="form-control" />
-                    <span asp-validation-for="Courriel" class="text-danger"></span>
+<div>
+    <section id="content" class="s-content">
+        <section class="s-pageheader pageheader">
+            <div class="row">
+                <div class="column xl-12">
+                    <h1 class="page-title">
+                        <span class="page-title__small-type text-pretitle">BookRat</span>
+                        @ViewData["Title"]
+                    </h1>
                 </div>
+            </div>
+        </section> <!--pageheader -->
 
-                <div class="form-group">
-                    <label asp-for="MotDePasse" class="control-label">Mot de passe</label>
-                    <input type="password" asp-for="MotDePasse" class="form-control" />
-                    <span asp-validation-for="MotDePasse" class="text-danger"></span>
-                </div>
-                <br />
-                <div class="form-group">
-                    <input type="submit" value="Connexion" class="btn btn-primary" />
-                </div>
-            </form>
+        <div class="container-fluid">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index" asp-controller="Home">Accueil</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+                </ol>
+            </nav>
         </div>
-    </div>
+        <section class="s-pagecontent pagecontent">
+            <div class="row pageintro">
+                <div class="column xl-6 lg-12">
+                    <h2 class="text-display-title">Emprunter et retourner vos livres préférés.</h2>
+                </div>
+                <div class="column xl-6 lg-12 u-flexitem-x-right">
+                    <div class="container m-auto">
+                        <div class="row">
+                            <div class="card" style="width: 50rem;">
+                                <form asp-action="Connexion" class="py-3">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="form-group">
+                                        <label asp-for="Courriel" class="control-label"></label>
+                                        <input asp-for="Courriel" class="form-control" />
+                                        <span asp-validation-for="Courriel" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label asp-for="MotDePasse" class="control-label">Mot de passe</label>
+                                        <input type="password" asp-for="MotDePasse" class="form-control" />
+                                        <span asp-validation-for="MotDePasse" class="text-danger"></span>
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <input type="submit" value="Connexion" class="btn btn-primary" />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- pageintro -->
+        </section>
+    </section>
 </div>
 
 @section Scripts {

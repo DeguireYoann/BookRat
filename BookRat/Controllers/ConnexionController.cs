@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using BookRat.Models;
 
 namespace BookRat.Controllers
 {
     public class ConnexionController : Controller
     {
-        private readonly string? _chaineConnexion;
+        private readonly BdBiblioContext _context;
 
         // Constructeur de la classe
-        public ConnexionController(IConfiguration configuration)
+        public ConnexionController(BdBiblioContext context)
         {
-            _chaineConnexion = configuration.GetConnectionString("BdGplccConnectionString");
+            _context = context;
         }
 
         // Méthode pour gérer la connexion des utilisateurs
@@ -33,36 +33,32 @@ namespace BookRat.Controllers
         // Méthode pour gérer la soumission du formulaire de connexion
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Connexion(IFormCollection collection)
+        public IActionResult Connexion(ConnexionViewModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Connexion à la base de données pour vérifier les informations de connexion
-                    using SqlConnection connexion = new SqlConnection(_chaineConnexion);
-                    string requete = "SELECT * FROM connexions WHERE courriel=@courriel AND motdepasse=@motdepasse";
-                    SqlCommand commande = new SqlCommand(requete, connexion);
+                    // Recherche de l'utilisateur dans la base de données
+                    var connexion = _context.Connexions
+                        .Where(c => c.Courriel == model.Courriel && c.MotDePasse == model.MotDePasse)
+                        .FirstOrDefault();
 
-                    commande.Parameters.AddWithValue("@courriel", (string?)collection["courriel"]);
-                    commande.Parameters.AddWithValue("@motdepasse", (string?)collection["motdepasse"]);
-                    connexion.Open();
-                    SqlDataReader lecteur = commande.ExecuteReader();
-                    if (lecteur.Read())
+                    if (connexion != null)
                     {
                         // Stocke l'ID du membre en session
-                        HttpContext.Session.SetInt32("MembreId", (Int32)lecteur["membreid"]);
+                        HttpContext.Session.SetInt32("MembreId", connexion.MembreId);
 
                         // Vérifie le statut du membre
-                        if ((string)lecteur["statut"] != "A")
+                        if (connexion.Statut != "A")
                         {
                             return Content("<h1>Contactez l'administrateur</h1>", "text/html");
                         }
 
                         // Vérifie le rôle du membre et redirige en conséquence
-                        if ((string)lecteur["role"] == "A")
+                        if (connexion.Role == "A")
                         {
-                            HttpContext.Session.SetString("Role", (string)lecteur["role"]);
+                            HttpContext.Session.SetString("Role", connexion.Role);
                             return RedirectToAction("Index", "Admin");
                         }
                         else

@@ -1,42 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using BookRat.Models;
-using System.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookRat.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly string? _chaineConnexion;
+        private readonly BdBiblioContext _context;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public HomeController( BdBiblioContext context)
         {
-            _chaineConnexion = configuration.GetConnectionString("BdGplccConnectionString");
-            _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
             int? membreId = HttpContext.Session.GetInt32("MembreId");
-            if (membreId == null) {  return View(); }
+            if (membreId == null) { return View(); }
             try
             {
-                using SqlConnection connexion = new SqlConnection(_chaineConnexion);
-                string requete = "SELECT role, statut FROM membres WHERE id=@membreId";
-                SqlCommand commande = new SqlCommand(requete, connexion);
-                commande.Parameters.AddWithValue("@membreId", membreId.Value);
+                var connexion = _context.Connexions
+                    .Include(c => c.Membre)
+                    .Include(c => c.Membre)
+                    .FirstOrDefault(c => c.MembreId == membreId);
 
-                connexion.Open();
-                SqlDataReader lecteur = commande.ExecuteReader();
-                if (lecteur.Read())
+                if (connexion != null)
                 {
-
-                    if ((string)lecteur["statut"] != "A")
+                    if (connexion.Statut != "A")
                     {
                         return Content("<h1>Contactez l'administrateur</h1>", "text/html");
                     }
-                    if ((string)lecteur["role"] == "M")
+                    if (connexion.Role == "M")
                     {
                         return RedirectToAction("Index", "Membre");
                     }

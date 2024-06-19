@@ -1,54 +1,50 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
 using System.Data;
 using BookRat.Models;
-using BookRat.Helpers;
 using BookRat.Filters;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookRat.Controllers
 {
-    [ServiceFilter(typeof(AdminAuthorizationFilter))] // Appliquer le filtre à toutes les actions du contrôleur
     public class AdminController : Controller
     {
-        private readonly string? _chaineConnexion;
+        private readonly BdBiblioContext _context;
 
-        // Constructeur de la classe
-        public AdminController(IConfiguration configuration)
+        public AdminController(BdBiblioContext context)
         {
-            _chaineConnexion = configuration.GetConnectionString("BdGplccConnectionString");
+            _context = context;
         }
 
-        // Méthode pour afficher la liste des livres
-        public IActionResult Index()
+        // Méthode pour afficher la liste des livres (requiert une autorisation de rôle)
+        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        public async Task<IActionResult> Index()
         {
-            List<Livre> listeLivre = new List<Livre>();
-            using (SqlConnection connexion = new SqlConnection(_chaineConnexion))
-            {
-                string requete = "SELECT l.id, l.titre, l.categorie, l.auteur, l.nbpages, c.titre AS categorie_titre " +
-                                 "FROM livres l " +
-                                 "JOIN categories c ON l.categorie = c.id";
-                SqlCommand commande = new SqlCommand(requete, connexion);
-                connexion.Open();
-                SqlDataReader lecteur = commande.ExecuteReader();
-                while (lecteur.Read())
+            var listeLivre = await _context.Livres
+                .Select(l => new Livre
                 {
-                    listeLivre.Add(new Livre
-                    {
-                        Id = lecteur.GetInt32("id"),
-                        Titre = lecteur.GetString("titre"),
-                        Categorie = lecteur.GetString("categorie_titre"),
-                        Auteur = lecteur.GetString("auteur"),
-                        NbPages = lecteur.GetInt32("nbpages"),
-                    });
-                }
-            }
+                    Id = l.Id,
+                    Titre = l.Titre,
+                    Categorie = l.Categorie,
+                    Auteur = l.Auteur,
+                    NbPages = l.NbPages
+                })
+                .ToListAsync();
+
             return View(listeLivre);
         }
 
-        // Méthode pour afficher les détails d'un livre
-        public IActionResult Details(int id)
+        // Méthode pour afficher les détails d'un livre (requiert une autorisation de rôle)
+        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        public async Task<IActionResult> Details(int? id)
         {
-            Livre? livre = LivreHelper.GetLivreById(_chaineConnexion ?? "", id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var livre = await _context.Livres
+                .Include(l => l.Categorie)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (livre == null)
             {
                 return NotFound();
@@ -57,111 +53,120 @@ namespace BookRat.Controllers
             return View(livre);
         }
 
-        // Méthode pour afficher le formulaire de création d'un livre
+        // Méthode pour afficher le formulaire de création d'un livre (requiert une autorisation de rôle)
+        [ServiceFilter(typeof(RoleAuthorizationFilter))]
         public IActionResult Create()
         {
-            List<Categorie> categories = LivreHelper.GetAllCategories(_chaineConnexion ?? "");
-            ViewBag.Categories = categories;
-
+            ViewBag.Categories = _context.Categories.ToList();
             return View();
         }
 
-        // Méthode pour créer un livre
+        // Méthode pour créer un livre (requiert une autorisation de rôle)
         [HttpPost]
-        public IActionResult Create(Livre livre)
+        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        public async Task<IActionResult> Create(LivreViewModel livre)
         {
-            try
+            if (ModelState.IsValid)
             {
-                using (SqlConnection connexion = new SqlConnection(_chaineConnexion))
-                {
-                    string requete = "INSERT INTO livres (titre, categorie, auteur, nbpages) VALUES (@titre, @categorie, @auteur, @nbpages)";
-                    SqlCommand commande = new SqlCommand(requete, connexion);
-                    commande.Parameters.AddWithValue("@titre", livre.Titre);
-                    commande.Parameters.AddWithValue("@categorie", livre.Categorie);
-                    commande.Parameters.AddWithValue("@auteur", livre.Auteur ?? "");
-                    commande.Parameters.AddWithValue("@nbpages", livre.NbPages ?? 0);
-
-                    connexion.Open();
-                    commande.ExecuteNonQuery();
-                }
-                return RedirectToAction("Index");
+                _context.Livres.Add(new Livre {
+                    Titre = livre.Titre,
+                    Auteur = livre.Auteur,
+                    NbPages = livre.NbPages,
+                    CategorieId = livre.CategorieId
+                });
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
-        // Méthode pour afficher le formulaire de modification d'un livre
-        public IActionResult Edit(int id)
+        // Méthode pour afficher le formulaire de modification d'un livre (requiert une autorisation de rôle)
+        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        public async Task<IActionResult> Edit(int? id)
         {
-            List<Categorie> categories = LivreHelper.GetAllCategories(_chaineConnexion ?? "");
-            Livre? livre = LivreHelper.GetLivreById(_chaineConnexion ?? "", id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var livre = await _context.Livres.FindAsync(id);
             if (livre == null)
             {
                 return NotFound();
             }
-            ViewBag.Categories = categories;
-            return View(livre); ;
+            ViewBag.Categories = _context.Categories.ToList();
+            return View(livre);
         }
 
-        // Méthode pour modifier un livre
+        // Méthode pour modifier un livre (requiert une autorisation de rôle)
         [HttpPost]
-        public IActionResult Edit(int id, Livre livre)
+        [ValidateAntiForgeryToken]
+        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        public async Task<IActionResult> Edit(int id, Livre livre)
         {
-            try
+            if (id != livre.Id)
             {
-                using (SqlConnection connexion = new SqlConnection(_chaineConnexion))
-                {
-                    string requete = "UPDATE livres SET titre = @titre, categorie = @categorie, auteur = @auteur, nbpages = @nbpages WHERE id = @id";
-                    SqlCommand commande = new SqlCommand(requete, connexion);
-                    commande.Parameters.AddWithValue("@id", id);
-                    commande.Parameters.AddWithValue("@titre", livre.Titre);
-                    commande.Parameters.AddWithValue("@categorie", livre.Categorie);
-                    commande.Parameters.AddWithValue("@auteur", livre.Auteur);
-                    commande.Parameters.AddWithValue("@nbpages", livre.NbPages);
+                return NotFound();
+            }
 
-                    connexion.Open();
-                    commande.ExecuteNonQuery();
-                }
-                return RedirectToAction("Index");
-            }
-            catch
+            if (ModelState.IsValid)
             {
-                return View();
+                try
+                {
+                    _context.Livres.Update(livre);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!LivreExists(livre.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
             }
+            return View(livre);
         }
 
-        // Méthode pour afficher le formulaire de suppression d'un livre
-        public IActionResult Delete(int id)
+        // Méthode pour afficher le formulaire de suppression d'un livre (requiert une autorisation de rôle)
+        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        public async Task<IActionResult> Delete(int? id)
         {
-            Livre? livre = LivreHelper.GetLivreById(_chaineConnexion ?? "", id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var livre = await _context.Livres
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (livre == null)
+            {
+                return NotFound();
+            }
 
             return View(livre);
         }
 
-        // Méthode pour gérer la suppression d'un livre
+        // Méthode pour gérer la suppression d'un livre (requiert une autorisation de rôle)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        [ServiceFilter(typeof(RoleAuthorizationFilter))]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            try
-            {
-                using (SqlConnection connexion = new SqlConnection(_chaineConnexion))
-                {
-                    string requete = "DELETE FROM livres WHERE id = @id";
-                    SqlCommand commande = new SqlCommand(requete, connexion);
-                    commande.Parameters.AddWithValue("@id", id);
+            var livre = await _context.Livres.FindAsync(id);
+            _context.Livres.Remove(livre);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
 
-                    connexion.Open();
-                    commande.ExecuteNonQuery();
-                }
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+        private bool LivreExists(int id)
+        {
+            return _context.Livres.Any(e => e.Id == id);
         }
     }
 }
+

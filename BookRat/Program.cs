@@ -1,6 +1,14 @@
 using BookRat.Filters;
+using BookRat.Models;
+using Microsoft.EntityFrameworkCore;
+using BookRat.Filters;
+using BookRat.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<BdBiblioContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BdGplccConnectionString")));
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -14,8 +22,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddScoped<AdminAuthorizationFilter>();
-builder.Services.AddScoped<MemberAuthorizationFilter>();
+builder.Services.AddScoped<RoleAuthorizationFilter>();
 
 var app = builder.Build();
 

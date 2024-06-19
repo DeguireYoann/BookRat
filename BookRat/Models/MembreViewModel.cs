@@ -18,7 +18,6 @@
         [EmailAddress(ErrorMessage = "Le format de l'adresse courriel est invalide.")]
         public string Courriel { get; set; }
         public string? Sexe { get; set; }
-        public DateTime? DateNaissance { get; set; }
 
         [Required(ErrorMessage = "Le mot de passe est obligatoire.")]
         [StringLength(12, MinimumLength = 8, ErrorMessage = "Le mot de passe doit contenir entre 8 et 12 caractères.")]
